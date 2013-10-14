@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		90264CCA180B4C6900BF4957 /* NSMutableArray+Convenience.m in Sources */ = {isa = PBXBuildFile; fileRef = 90264CC9180B4C6900BF4957 /* NSMutableArray+Convenience.m */; };
+		9092F39E180B58D600E9081C /* MultiLineCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9092F39D180B58D600E9081C /* MultiLineCell.m */; };
+		9092F3A0180B591300E9081C /* MultiLineCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9092F39F180B591300E9081C /* MultiLineCell.xib */; };
 		90D05807180A5C8600D6D179 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90D05806180A5C8600D6D179 /* Foundation.framework */; };
 		90D05809180A5C8600D6D179 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90D05808180A5C8600D6D179 /* CoreGraphics.framework */; };
 		90D0580B180A5C8600D6D179 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90D0580A180A5C8600D6D179 /* UIKit.framework */; };
@@ -35,6 +38,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		90264CC8180B4C6900BF4957 /* NSMutableArray+Convenience.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSMutableArray+Convenience.h"; path = "Categories/NSMutableArray+Convenience.h"; sourceTree = "<group>"; };
+		90264CC9180B4C6900BF4957 /* NSMutableArray+Convenience.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSMutableArray+Convenience.m"; path = "Categories/NSMutableArray+Convenience.m"; sourceTree = "<group>"; };
+		9092F39C180B58D600E9081C /* MultiLineCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiLineCell.h; sourceTree = "<group>"; };
+		9092F39D180B58D600E9081C /* MultiLineCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MultiLineCell.m; sourceTree = "<group>"; };
+		9092F39F180B591300E9081C /* MultiLineCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MultiLineCell.xib; path = ../MultiLineCell.xib; sourceTree = "<group>"; };
 		90D05803180A5C8600D6D179 /* MakeList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MakeList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		90D05806180A5C8600D6D179 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		90D05808180A5C8600D6D179 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -81,6 +89,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		90264CC7180B4C1800BF4957 /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				90264CC8180B4C6900BF4957 /* NSMutableArray+Convenience.h */,
+				90264CC9180B4C6900BF4957 /* NSMutableArray+Convenience.m */,
+			);
+			name = Categories;
+			sourceTree = "<group>";
+		};
 		90D057FA180A5C8600D6D179 = {
 			isa = PBXGroup;
 			children = (
@@ -119,6 +136,10 @@
 				90D0580D180A5C8600D6D179 /* Supporting Files */,
 				90D0583E180B170C00D6D179 /* MakeListTableViewController.h */,
 				90D0583F180B170C00D6D179 /* MakeListTableViewController.m */,
+				90264CC7180B4C1800BF4957 /* Categories */,
+				9092F39C180B58D600E9081C /* MultiLineCell.h */,
+				9092F39D180B58D600E9081C /* MultiLineCell.m */,
+				9092F39F180B591300E9081C /* MultiLineCell.xib */,
 			);
 			path = MakeList;
 			sourceTree = "<group>";
@@ -233,6 +254,7 @@
 			files = (
 				90D0581F180A5C8600D6D179 /* Images.xcassets in Resources */,
 				90D05811180A5C8600D6D179 /* InfoPlist.strings in Resources */,
+				9092F3A0180B591300E9081C /* MultiLineCell.xib in Resources */,
 				90D0581A180A5C8600D6D179 /* Main.storyboard in Resources */,
 				90D05842180B1DCE00D6D179 /* ListItems.plist in Resources */,
 			);
@@ -254,8 +276,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				90D05817180A5C8600D6D179 /* AppDelegate.m in Sources */,
+				90264CCA180B4C6900BF4957 /* NSMutableArray+Convenience.m in Sources */,
 				90D05813180A5C8600D6D179 /* main.m in Sources */,
 				90D05840180B170C00D6D179 /* MakeListTableViewController.m in Sources */,
+				9092F39E180B58D600E9081C /* MultiLineCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

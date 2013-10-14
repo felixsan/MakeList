@@ -7,133 +7,200 @@
 //
 
 #import "MakeListTableViewController.h"
+#import "MultiLineCell.h"
 
 @interface MakeListTableViewController ()
+
+@property (nonatomic, strong) NSMutableArray *listItems;
+@property (nonatomic, strong) NSString *listFile;
+
+- (IBAction)dismissKeyboard:(id)sender;
+- (void)addItem:sender;
+- (void)toggleEdit:sender;
+- (void)saveContents;
 
 @end
 
 @implementation MakeListTableViewController
 
-@synthesize listItems, listItemKeys;
+@synthesize listItems;
 
-- (id)initWithStyle:(UITableViewStyle)style
+# pragma mark - Custom property getters
+
+- (NSString *)listFile
 {
-    self = [super initWithStyle:style];
-    if (self) {
-        // Custom initialization
+    if (!_listFile) {
+        _listFile = [[NSBundle mainBundle] pathForResource:@"ListItems" ofType:@"plist"];
     }
-    return self;
+    return _listFile;
 }
+
+# pragma mark - ViewController Functions
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    self.navigationItem.leftBarButtonItem = self.editButtonItem;
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"✚"
-                                                                              style:UIBarButtonItemStylePlain
-                                                                             target:self
-                                                                             action:@selector(add)];;
+    // Add in our custom cell
+    UINib *multiLineCellNib = [UINib nibWithNibName:@"MultiLineCell" bundle:nil];
+    [self.tableView registerNib:multiLineCellNib forCellReuseIdentifier:@"Cell"];
     
 
+    // Show the Add and Edit buttons
+    UIBarButtonItem *editButton = [[UIBarButtonItem alloc] initWithTitle:@"Edit"
+                                                                   style:UIBarButtonItemStylePlain
+                                                                  target:self
+                                                                  action:@selector(toggleEdit:)];
+    self.navigationItem.leftBarButtonItem = editButton;
+    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd
+                                                                               target:self
+                                                                               action:@selector(addItem:)];
+    self.navigationItem.rightBarButtonItem = addButton;
+    
+    // Add in a Tap Gesture for dismissing the keyboard
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                          action:@selector(dismissKeyboard:)];
+    tap.delegate = self;
+    [self.tableView addGestureRecognizer:tap];
+    
     // Load the todo list items;
-    NSString *listFile = [[NSBundle mainBundle] pathForResource:@"ListItems" ofType:@"plist"];
+    listItems = [[NSMutableArray alloc] initWithContentsOfFile:self.listFile];
+}
+
+
+- (IBAction)dismissKeyboard:(id)sender
+{
+    [self.view endEditing:YES];
+ 
+}
+
+# pragma mark - Helper Functions
+
+- (void)addItem:sender
+{
+    if (self.tableView.isEditing) {
+        [self toggleEdit:nil];
+    }
+    NSIndexPath *topRow = [NSIndexPath indexPathForRow:0 inSection:0];
+    [self tableView:self.tableView commitEditingStyle:UITableViewCellEditingStyleInsert forRowAtIndexPath:topRow];
+}
+
+- (void)toggleEdit:sender
+{
+    [self.tableView setEditing:!self.tableView.isEditing animated:YES];
     
-    listItems = [[NSDictionary alloc] initWithContentsOfFile:listFile];
-    listItemKeys = [listItems allKeys];
+    if (self.tableView.isEditing) {
+        [self.view endEditing:YES];
+        [self.navigationItem.leftBarButtonItem setTitle:@"Done"];
+    } else {
+        [self.navigationItem.leftBarButtonItem setTitle:@"Edit"];
+    }
 }
 
-- (void)didReceiveMemoryWarning
+- (void)saveContents
 {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+//    NSLog(@"%@", listItems);
+    [listItems writeToFile:self.listFile atomically:NO];
 }
 
-- (void)add
+#pragma mark - TableViewDelegate Methods
+
+- (void)tableView:(UITableView *)tableView willBeginEditingRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
+    [self.view endEditing:YES];
 }
 
-#pragma mark - Table view data source
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    // Return the number of sections.
-    return 1;
-}
+#pragma mark - TableViewDataSource Methods
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-
-    // Return the number of rows in the section.
     return [listItems count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"Cell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    MultiLineCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
     // Configure the cell...
-    NSString *currentName = [listItemKeys objectAtIndex:indexPath.row];
-    [cell.textLabel setText:currentName];
-    
+    NSString *itemName = [listItems objectAtIndex:indexPath.row];
+    cell.cellTextView.delegate = self;
+    cell.cellTextView.text = itemName;
     return cell;
 }
 
 
-// Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return YES;
 }
 
 
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
+                                            forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
+        [listItems removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }   
     else if (editingStyle == UITableViewCellEditingStyleInsert) {
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
+        [listItems insertObject:@"" atIndex:indexPath.row];
+        [tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
+        MultiLineCell *cell = (MultiLineCell *) [tableView cellForRowAtIndexPath:indexPath];
+        [cell.cellTextView becomeFirstResponder];
+    }
+    [self saveContents];
 }
-*/
 
 
 // Override to support rearranging the table view.
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
 {
-    
+    [listItems moveObjectAtIndex:fromIndexPath.row toIndex:toIndexPath.row];
+    [self saveContents];
+}
+
+#pragma mark - TextViewDelegate Methods
+
+- (void)textViewDidEndEditing:(UITextView *)textView
+{
+
+    CGPoint hitPoint = [textView convertPoint:CGPointZero toView:self.tableView];
+    NSIndexPath *index = [self.tableView indexPathForRowAtPoint:hitPoint];
+    listItems[index.row] = textView.text;
+//    NSLog(@"%@", textView.text);
+    [self saveContents];
 }
 
 
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
-    // Return NO if you do not want the item to be re-orderable.
+    if ([text isEqualToString:@"\n"]) {
+        [self dismissKeyboard:nil];
+        return NO;
+    }
+
     return YES;
 }
-*/
 
-/*
-#pragma mark - Navigation
-
-// In a story board-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+- (BOOL)textViewShouldBeginEditing:(UITextView *)textView
 {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+    if (self.tableView.isEditing) {
+        return NO;
+    }
+    return YES;
 }
 
- */
+#pragma mark - UIGestureRecognizerDelegate Methods
+
+-(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+    // Only listen for tap events when we're not in editing mode
+{
+    if (self.tableView.isEditing) {
+        return NO;
+    }
+    return YES;
+}
 
 @end

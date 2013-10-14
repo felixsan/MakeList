@@ -7,10 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "NSMutableArray+Convenience.h"
 
-@interface MakeListTableViewController : UITableViewController  <UITableViewDelegate, UITableViewDataSource>
-
-@property (nonatomic, strong) NSDictionary *listItems;
-@property (nonatomic, strong) NSArray *listItemKeys;
+@interface MakeListTableViewController : UITableViewController  <UITableViewDelegate, UITableViewDataSource, UITextViewDelegate, UIGestureRecognizerDelegate>
 
 @end
