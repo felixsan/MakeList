@@ -78,6 +78,7 @@
         [self toggleEdit:nil];
     }
     NSIndexPath *topRow = [NSIndexPath indexPathForRow:0 inSection:0];
+    [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:YES];
     [self tableView:self.tableView commitEditingStyle:UITableViewCellEditingStyleInsert forRowAtIndexPath:topRow];
 }
 
