@@ -27,8 +27,7 @@
 
 # pragma mark - Custom property getters
 
-- (NSString *)listFile
-{
+- (NSString *)listFile {
     if (!_listFile) {
         _listFile = [[NSBundle mainBundle] pathForResource:@"ListItems" ofType:@"plist"];
     }
@@ -37,8 +36,7 @@
 
 # pragma mark - ViewController Functions
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
 
     // Add in our custom cell
@@ -68,16 +66,14 @@
 }
 
 
-- (IBAction)dismissKeyboard:(id)sender
-{
+- (IBAction)dismissKeyboard:(id)sender {
     [self.view endEditing:YES];
  
 }
 
 # pragma mark - Helper Functions
 
-- (void)addItem:sender
-{
+- (void)addItem:sender {
     if (self.tableView.isEditing) {
         [self toggleEdit:nil];
     }
@@ -85,8 +81,7 @@
     [self tableView:self.tableView commitEditingStyle:UITableViewCellEditingStyleInsert forRowAtIndexPath:topRow];
 }
 
-- (void)toggleEdit:sender
-{
+- (void)toggleEdit:sender {
     [self.tableView setEditing:!self.tableView.isEditing animated:YES];
     
     if (self.tableView.isEditing) {
@@ -97,28 +92,24 @@
     }
 }
 
-- (void)saveContents
-{
+- (void)saveContents {
 //    NSLog(@"%@", listItems);
     [listItems writeToFile:self.listFile atomically:NO];
 }
 
 #pragma mark - TableViewDelegate Methods
 
-- (void)tableView:(UITableView *)tableView willBeginEditingRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (void)tableView:(UITableView *)tableView willBeginEditingRowAtIndexPath:(NSIndexPath *)indexPath {
     [self.view endEditing:YES];
 }
 
 #pragma mark - TableViewDataSource Methods
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return [listItems count];
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     static NSString *CellIdentifier = @"Cell";
     MultiLineCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
@@ -130,20 +121,17 @@
 }
 
 
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
     return YES;
 }
 
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
-                                            forRowAtIndexPath:(NSIndexPath *)indexPath
-{
+                                            forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         [listItems removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }   
-    else if (editingStyle == UITableViewCellEditingStyleInsert) {
+    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
         [listItems insertObject:@"" atIndex:indexPath.row];
         [tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
@@ -155,16 +143,14 @@
 
 
 // Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
-{
+- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
     [listItems moveObjectAtIndex:fromIndexPath.row toIndex:toIndexPath.row];
     [self saveContents];
 }
 
 #pragma mark - TextViewDelegate Methods
 
-- (void)textViewDidEndEditing:(UITextView *)textView
-{
+- (void)textViewDidEndEditing:(UITextView *)textView {
 
     CGPoint hitPoint = [textView convertPoint:CGPointZero toView:self.tableView];
     NSIndexPath *index = [self.tableView indexPathForRowAtPoint:hitPoint];
@@ -174,8 +160,7 @@
 }
 
 
-- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
-{
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
     if ([text isEqualToString:@"\n"]) {
         [self dismissKeyboard:nil];
         return NO;
@@ -184,8 +169,7 @@
     return YES;
 }
 
-- (BOOL)textViewShouldBeginEditing:(UITextView *)textView
-{
+- (BOOL)textViewShouldBeginEditing:(UITextView *)textView {
     if (self.tableView.isEditing) {
         return NO;
     }
@@ -194,9 +178,8 @@
 
 #pragma mark - UIGestureRecognizerDelegate Methods
 
--(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+-(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
     // Only listen for tap events when we're not in editing mode
-{
     if (self.tableView.isEditing) {
         return NO;
     }
